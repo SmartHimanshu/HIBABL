@@ -185,7 +185,7 @@ tmpcseg:
     andl $(~HIBABL_MEMORY_CPU_CR0_PE_ON), %eax
     movl %eax, %cr0
 
-    ljmpl $0, $realseg:
+    ljmpl $0, $realseg
 realseg:
 
     xorl %eax, %eax

@@ -1,0 +1,16 @@
+CC  := i686-elf-gcc
+LD  := i686-elf-ld
+
+CFLAGS = -ffreestanding -O0 -g -Wall -Wextra
+ASFLAGS = -g
+
+FILES = $(BIN_DIR)/startup.o
+
+all: $(BUILD_DIR)/core.bin
+
+$(BUILD_DIR)/core.bin: $(FILES)
+	$(LD) -g -relocatable $(FILES) -o $(BUILD_DIR)/corefull.o
+	$(CC) $(FLAGS) -T ./linker.ld -o $@ -nostdlib $(BUILD_DIR)/corefull.o
+
+$(BIN_DIR)/startup.o: $(CORE_DIR)/kern/startup.S
+	$(CC) $(INCLUDE_DIR) -c $< -o $@
