@@ -154,7 +154,7 @@ pm_to_rm:
     lgdt gdtdesc
 
     sidt pmidt
-    lidt LOCAL(readidt)
+    lidt LOCAL(realidt)
 
     /* Save the prot stack */
     movl %esp, %eax

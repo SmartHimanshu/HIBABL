@@ -2,6 +2,9 @@
 .file "startup.S"
 
 #include <HIBABL/symbol.h>
+#include <HIBABL/memory.h>
+
+.code16
 
 .globl start
 start:
@@ -41,9 +44,9 @@ die:
 
 /* Simple A20 gate activation for now. */
 hibabl_a20:
-    inb %al, 0x92
+    inb $0x92, %al
     orb %al, 2
-    outb 0x92, %al
+    outb %al, $0x92
     ret
 
 LOCAL(boot_drive):

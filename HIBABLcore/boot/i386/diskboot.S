@@ -79,7 +79,7 @@ LOCAL(load_loop):
 
     jne LOCAL(load_loop)
 
-    jmp (HIBABL_MACHINE_STAGE2_ADDR+0x200)
+    ljmp $0, $(HIBABL_MACHINE_STAGE2_ADDR+0x200)
 LOCAL(chs_addressing):
 
 
