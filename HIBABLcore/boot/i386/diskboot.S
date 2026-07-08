@@ -2,6 +2,7 @@
 
 #include <HIBABL/boot.h>
 #include <HIBABL/symbol.h>
+#include <HIBABL/offset.h>
 
 #define MSG(x) movw $x, %si; call LOCAL(message)
 
@@ -38,6 +39,7 @@ start:
     movl 4(%di), %eax
     movl %eax, 12(%si)
 
+
 LOCAL(load_loop):
 
     movb $0x42, %ah     /* Perform the read into disk address buffer. */
@@ -49,17 +51,21 @@ LOCAL(load_loop):
     movw    $0x100, %cx
     movw    $HIBABL_MACHINE_DISK_BUFFER_SEG, %bx
     movw    %bx, %ds
+    
     xorw    %si, %si
-    movw    LOCAL(core_address_pointer), %di
+    movw    $(HIBABL_MACHINE_STAGE2_ADDR+0x200), %di
     movw	%si, %es
 
     cld
-    rep
-    movsw
+    rep movsw
+
+    
 
     popw %ds
     popa
     
+    
+
     movl 8(%si), %eax   /* Advance the LBA address to read from. */
     addl $1, %eax
     movl %eax, 8(%si)
@@ -77,11 +83,20 @@ LOCAL(load_loop):
 
     cmpw $0, %ax
 
+    
+
     jne LOCAL(load_loop)
 
+    
+    movb $'D', %al
+    movb $0x0E, %ah
+    int $0x10
+    
     ljmp $0, $(HIBABL_MACHINE_STAGE2_ADDR+0x200)
 LOCAL(chs_addressing):
-
+    pushw %cs
+    popw %ds
+    MSG(stage2_welcome_msg)
 
 
 
@@ -95,6 +110,7 @@ LOCAL(message):
     pushw %bx
     movb $0x0E, %ah
     movb $0, %bh
+    movb $0x07, %bl
 1:
     lodsb
     cmp $0, %al
@@ -112,8 +128,7 @@ stage2_welcome_msg:
 LOCAL(core_address_pointer):
     .word HIBABL_MACHINE_STAGE2_ADDR+0x200
 
-.org 0x200 - HIBABL_MACHINE_CORE_SIZE_PARAMS
-
 LOCAL(core_size_params):
     .long 2, 0
-    .word 64
+    .word 1
+.org 0x200

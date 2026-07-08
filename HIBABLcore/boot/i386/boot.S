@@ -37,6 +37,7 @@ LOCAL(reset_start):
     xorw %ax, %ax
     movw %ax, %ds
     movw %ax, %es
+    movw %ax, %ss
 
     movw $HIBABL_MACHINE_STACK_SEG, %sp
 

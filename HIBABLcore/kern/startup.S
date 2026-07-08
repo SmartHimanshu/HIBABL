@@ -10,6 +10,8 @@
 start:
     cli
 
+    movw $0x0F41, 0xB8000
+
     xorw %ax, %ax
     movw %ax, %ds
     movw %ax, %es
