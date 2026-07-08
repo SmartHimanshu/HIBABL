@@ -1,0 +1,19 @@
+#ifndef HIBABL_CORE_MEMORY_H
+#define HIBABL_CORE_MEMORY_H
+
+
+/* This is protected mode stack*/
+#define HIBABL_MEMORY_MACHINE_PM_STACK 0x7FFF0
+/* This is real mode stack. */
+#define HIBABL_MEMORY_MACHINE_REAL_STACK 0x2000 - 0x10
+
+/* These are the segment selectors offset in our gdt. */
+#define HIBABL_MEMORY_MACHINE_PM_CS 0x8
+#define HIBABL_MEMORY_MACHINE_PM_DS 0x10
+#define HIBABL_MEMORY_MACHINE_RM_CS 0x18
+#define HIBABL_MEMORY_MACHINE_RM_DS 0x20
+
+/* The second bit is the one we have to toggle for protected mode */
+#define HIBABL_MEMORY_CPU_CR0_PE_ON 1
+
+#endif
