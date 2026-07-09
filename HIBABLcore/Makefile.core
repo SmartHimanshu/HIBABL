@@ -1,7 +1,7 @@
 CC  := i686-elf-gcc
 LD  := i686-elf-ld
 
-CFLAGS = -ffreestanding -O0 -g -Wall -Wextra -mregparm=3 -mrtd
+CFLAGS = -ffreestanding -O0 -g -Wall -Wextra
 ASFLAGS = -g
 
 FILES = $(BIN_DIR)/startup.o $(BIN_DIR)/main.o $(BIN_DIR)/console.o $(BIN_DIR)/string.o $(BIN_DIR)/bioscall.o
@@ -12,10 +12,10 @@ $(BUILD_DIR)/core.bin: $(FILES)
 	$(LD) -g -relocatable $(FILES) -o $(BUILD_DIR)/corefull.o
 	$(CC) $(CFLAGS) -T ./linker.ld -o $@ -nostdlib $(BUILD_DIR)/corefull.o
 
-$(BIN_DIR)/startup.o: $(CORE_DIR)/kern/startup.S
+$(BIN_DIR)/startup.o: $(CORE_DIR)/kern/i386/startup.S
 	$(CC) $(ASFLAGS) $(INCLUDE_DIR) -c $< -o $@
 
-$(BIN_DIR)/bioscall.o: $(CORE_DIR)/kern/bioscall.S
+$(BIN_DIR)/bioscall.o: $(CORE_DIR)/kern/i386/bioscall.S
 	$(CC) $(ASFLAGS) $(INCLUDE_DIR) -c $< -o $@
 
 $(BIN_DIR)/main.o: $(CORE_DIR)/kern/main.c

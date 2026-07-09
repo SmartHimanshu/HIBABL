@@ -17,7 +17,7 @@ struct bios_regs
     u32 edx;
 };
 
-void bios_interrupt(u8 intno,
-                         struct bios_regs *regs);
+void __attribute__((regparm(3))) bios_interrupt(u8 intno,
+                                                  struct bios_regs *regs);
 
 #endif
