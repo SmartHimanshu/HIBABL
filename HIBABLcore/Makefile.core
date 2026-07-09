@@ -1,7 +1,7 @@
 CC  := i686-elf-gcc
 LD  := i686-elf-ld
 
-CFLAGS = -ffreestanding -O0 -g -Wall -Wextra
+CFLAGS = -ffreestanding -O0 -g -Wall -Wextra -mregparm=3 -mrtd
 ASFLAGS = -g
 
 FILES = $(BIN_DIR)/startup.o $(BIN_DIR)/main.o $(BIN_DIR)/console.o $(BIN_DIR)/string.o $(BIN_DIR)/bioscall.o
