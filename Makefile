@@ -8,7 +8,7 @@ INCLUDE_DIR	:= -I$(ROOT_DIR)/include
 
 export ROOT_DIR BIN_DIR BUILD_DIR CORE_DIR INCLUDE_DIR
 
-.PHONY: all clean run
+.PHONY: all clean run deploy
 
 all:
 	$(MAKE) -C $(CORE_DIR)

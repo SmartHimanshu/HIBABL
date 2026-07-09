@@ -6,6 +6,8 @@
 
 .code16
 
+.extern kmain
+
 .globl start
 start:
     cli
@@ -36,6 +38,7 @@ start:
 
     movw $0x0F41, 0xB8000
 
+    jmp kmain
 die:
     jmp die
 
