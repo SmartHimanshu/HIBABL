@@ -10,7 +10,8 @@
 
 .code16
 
-.globl start
+.globl start, _start;
+_start:
 start:
     /* Save drive reference */
     pushw %dx
@@ -53,7 +54,7 @@ LOCAL(load_loop):
     movw    %bx, %ds
     
     xorw    %si, %si
-    movw    $(HIBABL_MACHINE_STAGE2_ADDR+0x200), %di
+    movw    %cs:LOCAL(core_address_pointer), %di
     movw	%si, %es
 
     cld
@@ -86,11 +87,6 @@ LOCAL(load_loop):
     
 
     jne LOCAL(load_loop)
-
-    
-    movb $'D', %al
-    movb $0x0E, %ah
-    int $0x10
     
     ljmp $0, $(HIBABL_MACHINE_STAGE2_ADDR+0x200)
 LOCAL(chs_addressing):

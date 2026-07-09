@@ -7,7 +7,8 @@
 
 .code16
 
-.globl start
+.globl start, _start;
+_start:
 start:
     jmp LOCAL(postBPB)
     nop
