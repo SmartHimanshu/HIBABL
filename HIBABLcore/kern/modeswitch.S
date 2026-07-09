@@ -103,7 +103,7 @@ LOCAL(realidt):
 pmidt:
     .word 0
     .long 0
-
+.globl rm_to_pm
 rm_to_pm:
     .code16
     cli
@@ -148,7 +148,7 @@ pmcseg:
     lidt pmidt
 
     ret
-
+.globl pm_to_rm
 pm_to_rm:
     /* We want to be absolutely sure that we have a gdt loaded in. */
     lgdt gdtdesc
@@ -178,7 +178,7 @@ pm_to_rm:
 
     ljmp  $HIBABL_MEMORY_MACHINE_RM_CS, $tmpcseg
 tmpcseg:
-    .code16
+    .code16gcc
 
     /* set the mode to real mode */
     movl %cr0, %eax

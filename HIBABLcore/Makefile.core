@@ -4,7 +4,7 @@ LD  := i686-elf-ld
 CFLAGS = -ffreestanding -O0 -g -Wall -Wextra
 ASFLAGS = -g
 
-FILES = $(BIN_DIR)/startup.o $(BIN_DIR)/main.o $(BIN_DIR)/console.o $(BIN_DIR)/string.o
+FILES = $(BIN_DIR)/startup.o $(BIN_DIR)/main.o $(BIN_DIR)/console.o $(BIN_DIR)/string.o $(BIN_DIR)/bioscall.o
 
 all: $(BUILD_DIR)/core.bin
 
@@ -13,6 +13,9 @@ $(BUILD_DIR)/core.bin: $(FILES)
 	$(CC) $(CFLAGS) -T ./linker.ld -o $@ -nostdlib $(BUILD_DIR)/corefull.o
 
 $(BIN_DIR)/startup.o: $(CORE_DIR)/kern/startup.S
+	$(CC) $(ASFLAGS) $(INCLUDE_DIR) -c $< -o $@
+
+$(BIN_DIR)/bioscall.o: $(CORE_DIR)/kern/bioscall.S
 	$(CC) $(ASFLAGS) $(INCLUDE_DIR) -c $< -o $@
 
 $(BIN_DIR)/main.o: $(CORE_DIR)/kern/main.c

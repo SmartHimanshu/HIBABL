@@ -1,6 +1,8 @@
 #ifndef HIBABL_TYPES_H
 #define HIBABL_TYPES_H
 
+#ifndef __ASSEMBLER__
+
 typedef unsigned char u8;
 typedef signed char i8;
 
@@ -12,6 +14,8 @@ typedef signed int i32;
 
 typedef unsigned long long u64;
 typedef signed long long i64;
+
+#endif
 
 
 

@@ -36,13 +36,12 @@ start:
 
     call hibabl_a20
 
-    movw $0x0F41, 0xB8000
-
     jmp kmain
 die:
     jmp die
 
 #include "modeswitch.S"
+
 
 
 /* Simple A20 gate activation for now. */
