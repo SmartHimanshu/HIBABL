@@ -4,7 +4,7 @@ LD  := i686-elf-ld
 CFLAGS = -ffreestanding -O0 -g -Wall -Wextra
 ASFLAGS = -g
 
-FILES = $(BIN_DIR)/startup.o $(BIN_DIR)/main.o $(BIN_DIR)/console.o $(BIN_DIR)/string.o $(BIN_DIR)/bioscall.o
+FILES = $(BIN_DIR)/mmap.o $(BIN_DIR)/startup.o $(BIN_DIR)/main.o $(BIN_DIR)/console.o $(BIN_DIR)/string.o $(BIN_DIR)/bioscall.o
 
 all: $(BUILD_DIR)/core.bin
 
@@ -25,4 +25,7 @@ $(BIN_DIR)/console.o: $(CORE_DIR)/kern/console.c
 	$(CC) $(INCLUDE_DIR) $(CFLAGS) -std=gnu99 -c $< -o $@
 
 $(BIN_DIR)/string.o: $(CORE_DIR)/kern/string.c
+	$(CC) $(INCLUDE_DIR) $(CFLAGS) -std=gnu99 -c $< -o $@
+
+$(BIN_DIR)/mmap.o: $(CORE_DIR)/kern/memory/mmap.c
 	$(CC) $(INCLUDE_DIR) $(CFLAGS) -std=gnu99 -c $< -o $@
