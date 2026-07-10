@@ -8,7 +8,7 @@ take its pointer comfortably. */
 
 struct e820_mm map = {0, (struct e820_entry*)HIBABL_MEMORY_MACHINE_E820_ADDR};
 
-void mmap_add_entry(u64 base_addr, u64 length, u32 type)
+static void mmap_add_entry(u64 base_addr, u64 length, u32 type)
 {
     map.entries[map.num_entries].base_addr = base_addr;
     map.entries[map.num_entries].length = length;
@@ -29,7 +29,7 @@ u64 mmap_usable_memory(void)
     return res;
 }
 /* Returns 0 on failure, else 1 for success */
-u8 mmap_get_entry(struct e820_entry *entry, u32 *continuation)
+static u8 mmap_get_entry(struct e820_entry *entry, u32 *continuation)
 {
     struct bios_regs regs;
     regs.flags = DEFAULT_INT_FLAGS;

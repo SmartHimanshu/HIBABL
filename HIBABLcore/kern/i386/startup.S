@@ -22,6 +22,8 @@ start:
 
     sti
 
+    
+
     /* save the boot drive */
 	movb	%dl, LOCAL(boot_drive)
 

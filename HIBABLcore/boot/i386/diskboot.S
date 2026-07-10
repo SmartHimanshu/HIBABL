@@ -87,7 +87,7 @@ LOCAL(load_loop):
     
 
     jne LOCAL(load_loop)
-    
+
     ljmp $0, $(HIBABL_MACHINE_STAGE2_ADDR+0x200)
 LOCAL(chs_addressing):
     pushw %cs
@@ -126,5 +126,5 @@ LOCAL(core_address_pointer):
 
 LOCAL(core_size_params):
     .long 2, 0
-    .word 32
+    .word 4
 .org 0x200

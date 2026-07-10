@@ -22,7 +22,7 @@ struct e820_mm
     struct e820_entry* entries;
 };
 
-void mmap_add_entry(u64 base_addr, u64 length, u32 type);
 u64 mmap_usable_memory(void);
+void mmap_iterate(void);
 
 #endif
