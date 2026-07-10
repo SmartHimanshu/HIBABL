@@ -19,9 +19,10 @@ struct e820_entry
 struct e820_mm
 {
     u32 num_entries;
-    struct e820_entry* entires;
-}
+    struct e820_entry* entries;
+};
 
-void mmap_add_entry(struct e820_mm* map, u64 base_addr, u64 length, u32 type);
+void mmap_add_entry(u64 base_addr, u64 length, u32 type);
+u64 mmap_usable_memory(void);
 
 #endif
