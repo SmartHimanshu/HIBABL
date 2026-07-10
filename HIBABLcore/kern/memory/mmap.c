@@ -68,3 +68,8 @@ void mmap_iterate(void)
         }
     }
 }
+
+struct e820_mm *mmap_get(void)
+{
+    return &map;
+}

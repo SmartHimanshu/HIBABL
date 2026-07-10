@@ -24,5 +24,6 @@ struct e820_mm
 
 u64 mmap_usable_memory(void);
 void mmap_iterate(void);
+struct e820_mm *mmap_get(void);
 
 #endif
