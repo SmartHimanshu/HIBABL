@@ -30,7 +30,7 @@ void pmm_init(void)
             {
                 for(u64 j = offset; j < offset+(HIBABL_MEMORY_BITMAP_SIZE*8); j++)
                 {
-                    page_info_bitmap[j/8] |= 128>>(j%8);
+                    page_info_bitmap[j/8] |= 1<<(j%8);
                 }
                 break;
             }
@@ -39,7 +39,7 @@ void pmm_init(void)
                 u64 nxt_offset = ((map->entries[i].base_addr+map->entries[i].length)/4096);
                 for(u64 j = offset; j < offset+nxt_offset; j++)
                 {
-                    page_info_bitmap[j/8] |= 128>>(j%8);
+                    page_info_bitmap[j/8] |= 1<<(j%8);
                 }
                 continue;
             }
@@ -51,7 +51,7 @@ void pmm_init(void)
             {
                 for(u64 j = map->entries[i].base_addr/4096; j < (HIBABL_MEMORY_BITMAP_SIZE*8); j++)
                 {
-                    page_info_bitmap[j/8] |= 128>>(j%8);
+                    page_info_bitmap[j/8] |= 1<<(j%8);
                 }
                 break;
             }
@@ -59,7 +59,7 @@ void pmm_init(void)
             {
                 for(u64 j = map->entries[i].base_addr/4096; j < offset_a/4096; j++)
                 {
-                    page_info_bitmap[j/8] |= 128>>(j%8);
+                    page_info_bitmap[j/8] |= 1<<(j%8);
                 }
             }
         }
@@ -74,7 +74,7 @@ void* pmm_alloc_page(void)
         {
             for(u64 bit = 0; bit < 8; bit++)
             {
-                if((!page_info_bitmap[i]) & (1<<bit))
+                if((~page_info_bitmap[i]) & (1<<bit))
                 {
                     page_info_bitmap[i] |= (1<<bit);
                     return (void*) (((i*8)+bit)*4096);
