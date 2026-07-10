@@ -49,7 +49,7 @@ die:
 /* Simple A20 gate activation for now. */
 hibabl_a20:
     inb $0x92, %al
-    orb %al, $2
+    orb $2, %al
     outb %al, $0x92
     ret
 
