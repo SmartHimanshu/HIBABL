@@ -32,10 +32,13 @@ u64 mmap_usable_memory(void)
 static u8 mmap_get_entry(struct e820_entry *entry, u32 *continuation)
 {
     struct bios_regs regs;
+
+    u32 addr = (u32)entry;
+
     regs.flags = DEFAULT_INT_FLAGS;
     regs.eax = 0xE820;
-    regs.es = 0;
-    regs.edi = (u32)entry;
+    regs.es = (u16)(addr >> 4);;
+    regs.edi = addr & 0xF;
     regs.ebx = *continuation;
     regs.edx = 0x534D4150;
     regs.ecx = 20;
@@ -54,7 +57,7 @@ static u8 mmap_get_entry(struct e820_entry *entry, u32 *continuation)
 
 void mmap_iterate(void)
 {
-    u32 continuation;
+    u32 continuation = 0;
     struct e820_entry entry;
     while(mmap_get_entry(&entry, &continuation))
     {
