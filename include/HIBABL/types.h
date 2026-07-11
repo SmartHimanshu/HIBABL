@@ -13,6 +13,10 @@ typedef signed int i32;
 typedef unsigned long long u64;
 typedef signed long long i64;
 
+typedef u64 size_t;
+
+#define NULL ((void*)0)
+
 #define HIBABL_PACKED __attribute__((packed)) ;
 
 #endif

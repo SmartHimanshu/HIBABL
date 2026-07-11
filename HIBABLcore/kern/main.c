@@ -10,5 +10,10 @@ kmain()
     console_print(console_make_color(VGA_WHITE, VGA_BLACK), "Welcome to HIBA bootloader!");
     mmap_iterate();
     pmm_init();
+    void* ptr = heap_malloc(4096);
+    if(ptr)
+    {
+        
+    }
     while(1) { };
 }
