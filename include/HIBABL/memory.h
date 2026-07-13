@@ -25,6 +25,10 @@
 #define HIBABL_MEMORY_DYNAMIC_COVERAGE HIBABL_MEMORY_MAX_DYNAMIC_MB*0x100000
 #define HIBABL_MEMORY_BITMAP_SIZE HIBABL_MEMORY_MAX_DYNAMIC_MB*32
 
+/* This is info related to our heap. */
+#define HIBABL_MEMORY_HEAP_INITIAL_SIZE 1024*1024*4
+#define HIBABL_MEMORY_HEAP_GROWTH_RATE 1024*1024
+
 /* The second bit is the one we have to toggle for protected mode */
 #define HIBABL_MEMORY_CPU_CR0_PE_ON 1
 

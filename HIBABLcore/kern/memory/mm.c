@@ -2,8 +2,8 @@
 
 /*
 It's implementation is a simple linked list.
-We map 4KiB bytes initially and then we continue to 
-give malloc next 4KiB if we run out of space.
+We map 4MiB bytes initially and then we continue to 
+give malloc next 1MiB if we run out of space.
 */
 
 #include <HIBABL/types.h>
@@ -12,8 +12,8 @@ give malloc next 4KiB if we run out of space.
 #include <HIBABL/mm.h>
 
 u8* page_info_bitmap;
-struct heap_block* head = NULL;
-struct heap_block* tail = NULL;
+struct heap_header header;
+// If page_info_bitmap == 1 means used. 
 
 void pmm_init(void)
 {
@@ -106,41 +106,25 @@ static void mark_pages_used(size_t start, size_t end)
 
 void* pmm_alloc_pages(size_t count)
 {
-    size_t run_start = 0;
-    size_t run_len = 0;
-
-    for(size_t page = 0; page < HIBABL_MEMORY_BITMAP_SIZE * 8; page++)
+    u64 start;
+    u64 length = 0;
+    for(u64 bit; bit < HIBABL_MEMORY_BITMAP_SIZE*8; bit++)
     {
-        u8 byte = page_info_bitmap[page / 8];
-        u8 bit  = (byte >> (page % 8)) & 1;
-
-        if(bit == 0)  // free page
+        u8 thing = page_info_bitmap[bit/8] >> bit & 1;
+        if(!thing)
         {
-            if(run_len == 0)
-                run_start = page;
-
-            run_len++;
-
-            if(run_len == count)
+            if(length==0)
             {
-                for(size_t p = run_start;
-                    p < run_start + count;
-                    p++)
-                {
-                    page_info_bitmap[p / 8] |=
-                        (1 << (p % 8));
-                }
-
-                return (void*)(run_start * 4096);
+                start = bit;
+            }
+            length++;
+            if(count==length)
+            {
+                return (void*)(start*4096);
             }
         }
-        else
-        {
-            run_len = 0;
-        }
     }
-
-    return NULL;
+    return (void*) 0x00;
 }
 
 void pmm_free_page(void* ptr)
@@ -154,110 +138,5 @@ void pmm_free_page(void* ptr)
 
 void* heap_malloc(size_t size)
 {
-    size = (size + 7) & ~7;
 
-    if(head == NULL)
-    {
-        size_t total_size = ((size + sizeof(struct heap_block) + 4095) / 4096) * 4096;
-
-        head = (struct heap_block*)pmm_alloc_pages(total_size / 4096);
-
-
-        head->free = 0;
-        head->size = size;
-
-        size_t remaining = total_size - sizeof(struct heap_block) - size;
-
-        if(remaining > sizeof(struct heap_block))
-        {
-            tail = (struct heap_block*)((u64)head + sizeof(struct heap_block) + size);
-
-            tail->free = 1;
-            tail->size =
-                remaining - sizeof(struct heap_block);
-            tail->next = NULL;
-
-            head->next = tail;
-        }
-        else
-        {
-            tail = head;
-            head->next = NULL;
-        }
-
-        return (void*)
-        (
-            (u64)head +
-            sizeof(struct heap_block)
-        );
-    }
-
-    struct heap_block* runner = head;
-
-    while(runner != NULL)
-    {
-        if(runner->free)
-        {
-            if(runner->size >=
-               size + sizeof(struct heap_block) + 8)
-            {
-                struct heap_block* nextt =
-                    runner->next;
-
-                struct heap_block* new =
-                    (struct heap_block*)
-                    (
-                        (u64)runner +
-                        sizeof(struct heap_block) +
-                        size
-                    );
-
-                u64 old_size = runner->size;
-
-                runner->size = size;
-                runner->free = 0;
-                runner->next = new;
-
-                new->size =
-                    old_size -
-                    size -
-                    sizeof(struct heap_block);
-
-                new->free = 1;
-                new->next = nextt;
-
-                if(runner == tail)
-                    tail = new;
-
-                return (void*)
-                (
-                    (u64)runner +
-                    sizeof(struct heap_block)
-                );
-            }
-            else if(runner->size >= size)
-            {
-                runner->free = 0;
-
-                return (void*)
-                (
-                    (u64)runner +
-                    sizeof(struct heap_block)
-                );
-            }
-        }
-
-        runner = runner->next;
-    }
-
-    /* Since we didn't find enough memory, here we are supposed to get more memory via pages. */
-
-    u64 num_pages = (size/4096)+1;
-    
-    if(size%4096)
-    {
-
-    }
-
-    return NULL;
 }
