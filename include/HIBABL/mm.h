@@ -3,6 +3,11 @@
 
 #include "types.h"
 
+#define HEAP_ALIGNMENT 8
+
+#define ALIGN_UP(x,a) \
+    (((x)+(a)-1) & ~((a)-1))
+
 struct heap_block
 {
     u64 block_magic;
