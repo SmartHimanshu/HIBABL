@@ -11,6 +11,7 @@ give malloc next 1MiB if we run out of space.
 #include <HIBABL/mmap.h>
 #include <HIBABL/mm.h>
 #include <HIBABL/magic.h>
+#include <HIBABL/error.h>
 
 u8* page_info_bitmap;
 struct heap_header header;
@@ -142,39 +143,100 @@ void pmm_free_page(void* ptr)
 
 void heap_init(void)
 {
+    u32 aligned_struct_size = ALIGN_UP(sizeof(struct heap_block), HEAP_ALIGNMENT);
+    
     header.header_magic = HEAP_HEADER_MAGIC;
     header.free_blocks = 1;
     header.total_blocks = 1;
-    u64 total_needed_pages = (HIBABL_MEMORY_HEAP_INITIAL_SIZE+sizeof(struct heap_block)+HIBABL_MEMORY_PAGE_SIZE-1)/HIBABL_MEMORY_PAGE_SIZE;
+    
+    u64 total_needed_pages = (HIBABL_MEMORY_HEAP_INITIAL_SIZE+aligned_struct_size+HIBABL_MEMORY_PAGE_SIZE-1)/HIBABL_MEMORY_PAGE_SIZE;
+    
     header.total_pages = total_needed_pages;
+    
     void* addr_of_first_heap = pmm_alloc_pages(total_needed_pages);
+    
     header.head = (struct heap_block*)addr_of_first_heap;
     header.tail = header.head;
+
     header.head->block_magic = HEAP_BLOCK_MAGIC;
     header.head->free = 1;
     header.head->next = NULL;
     header.head->prev = NULL;
-    header.head->size = total_needed_pages*HIBABL_MEMORY_PAGE_SIZE - sizeof(struct heap_block);
+    header.head->size = total_needed_pages*HIBABL_MEMORY_PAGE_SIZE - aligned_struct_size;
 }
 
 void* heap_malloc(size_t size)
 {
+    size = ALIGN_UP(size, HEAP_ALIGNMENT);
+    u32 aligned_struct_size = ALIGN_UP(sizeof(struct heap_block), HEAP_ALIGNMENT);
     struct heap_block* runner = header.head;
     while(runner!=NULL)
     {
         if(runner->free && runner->size>=size)
         {
-            if(runner->size==size)
+            if(runner->size>=size+aligned_struct_size+HEAP_ALIGNMENT)
+            {
+                struct heap_block* k = (struct heap_block*)((u32)runner+aligned_struct_size+size);
+                k->size = runner->size - size - aligned_struct_size;
+                runner->size = size;
+                k->block_magic = HEAP_BLOCK_MAGIC;
+                k->free = 1;
+                k->next = runner->next;
+                k->prev = runner;
+                if(runner->next==NULL)
+                {
+                    header.tail = k;
+                }
+                else
+                {
+                    runner->next->prev = k;
+                }
+                runner->next = k;
+                runner->free = 0;
+                return (void*)((u32)runner + aligned_struct_size);
+            }
+            else if(runner->size>=size)
             {
                 runner->free = 0;
-                return (void*)((u32)runner + sizeof(struct heap_block));
-            }
-            else
-            {
-                
+                return (void*)((u32)runner + aligned_struct_size);
             }
         }
         runner = runner->next;
     }
-    return (void*)0x00;
+
+    //This is the case where the runner has exhausted itself and we need to allocate new memory
+
+    u32 total_needed_size = ((aligned_struct_size+size+HIBABL_MEMORY_PAGE_SIZE-1)/HIBABL_MEMORY_PAGE_SIZE)*HIBABL_MEMORY_PAGE_SIZE;
+    u32 needed_pages = total_needed_size/HIBABL_MEMORY_PAGE_SIZE;
+
+    void* end = pmm_alloc_pages(needed_pages);
+
+    struct heap_block* newtail = (struct heap_block*)end;
+    newtail->size = total_needed_size-aligned_struct_size;
+    newtail->block_magic = HEAP_BLOCK_MAGIC;
+    newtail->free = 0;
+    newtail->next = NULL;
+    newtail->prev = header.tail;
+    header.tail->next = newtail;
+    header.tail = newtail;
+
+    if(total_needed_size>=size+HEAP_ALIGNMENT+(aligned_struct_size*2))
+    {
+        struct heap_block* newnewtail = (struct heap_block*)((u32)end+(aligned_struct_size*2)+size);
+        newnewtail->block_magic = HEAP_BLOCK_MAGIC;
+        newnewtail->free = 1;
+        newnewtail->next = NULL;
+        newnewtail->prev = newtail;
+        newnewtail->size = total_needed_size - size - HEAP_ALIGNMENT -(aligned_struct_size*2);
+        newtail->size = size;
+        newtail->next = newnewtail;
+        header.tail = newnewtail;
+    }
+
+    return (void*)((u32)end+aligned_struct_size);
+}
+
+int heap_free(void* addr)
+{
+
 }
