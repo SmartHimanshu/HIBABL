@@ -8,19 +8,17 @@
 
 
 u8 console_make_color(u8 text_color, u8 bg_color);
-
 u16 console_make_char(u8 color, u8 character);
-
 void console_put_char(u8 color, u8 character, u16 x, u16 y);
-
 u8 console_get_character(u16 x, u16 y);
-
 void console_write_char(u8 color, u8 character);
-
 void console_change_color(u8 color, u16 xi, u16 yi, u16 xf, u16 yf);
-
 void console_print(u8 color, char* string);
-
+void console_print_dec(u8 color, int x);
+void console_print_hex(u8 color, u64 x);
+void console_print_string(u8 color, const char* s);
+void console_print_char(u8 color, char c);
+void console_highlight_line(u8 bg_color, int y);
 void console_init();
 
 #define VGA_BLACK          0x0

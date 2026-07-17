@@ -12,6 +12,7 @@ give malloc next 1MiB if we run out of space.
 #include <HIBABL/mm.h>
 #include <HIBABL/magic.h>
 #include <HIBABL/error.h>
+#include <HIBABL/console.h>
 
 u8* page_info_bitmap;
 struct heap_header header;
@@ -280,4 +281,35 @@ int heap_free(void* addr)
         }
     }
     return SUCCESS;
+}
+
+int heap_magic_check(void)
+{
+    struct heap_block* runner = header.head;
+
+    if(header.header_magic!=HEAP_HEADER_MAGIC)
+            return -1;
+
+    while(runner!=NULL)
+    {
+        if(runner->block_magic!=HEAP_BLOCK_MAGIC)
+            return -1;
+        runner = runner->next;
+    }
+    return SUCCESS;
+}
+
+
+/* These implementations of the allocator is to strictly be used for debugging purposes. */
+
+void* dmalloc(size_t size)
+{
+    console_print(console_make_color(VGA_LIGHT_GREEN, VGA_BLACK), "Allocated memory\n");
+    return heap_malloc(size);
+}
+
+int dfree(void* addr)
+{
+    console_print(console_make_color(VGA_LIGHT_GREEN, VGA_BLACK), "Freed memory\n");
+    return heap_free(addr);
 }

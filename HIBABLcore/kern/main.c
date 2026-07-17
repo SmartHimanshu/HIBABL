@@ -7,17 +7,9 @@ void __attribute__ ((noreturn))
 kmain()
 {
     console_init();
-    console_print(console_make_color(VGA_WHITE, VGA_BLACK), "Welcome to HIBA bootloader!");
+    console_print(console_make_color(VGA_WHITE, VGA_BLACK), "Welcome to HIBA bootloader!\n");
     mmap_iterate();
     pmm_init();
     heap_init();
-    void* ptr = heap_malloc(1024);
-    void* ptr2 = heap_malloc(256);
-    heap_free(ptr2);
-    void* ptr3 = heap_malloc(1024);
-    if(ptr || ptr2)
-    {
-        
-    }
     while(1) { };
 }
