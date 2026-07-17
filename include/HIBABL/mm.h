@@ -34,5 +34,6 @@ void* pmm_alloc_page(void);
 void* pmm_alloc_pages(size_t count);
 void* heap_malloc(size_t size);
 void heap_init(void);
+int heap_free(void* addr);
 
 #endif

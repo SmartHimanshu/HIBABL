@@ -13,6 +13,8 @@ kmain()
     heap_init();
     void* ptr = heap_malloc(1024);
     void* ptr2 = heap_malloc(256);
+    heap_free(ptr2);
+    void* ptr3 = heap_malloc(1024);
     if(ptr || ptr2)
     {
         

@@ -238,5 +238,46 @@ void* heap_malloc(size_t size)
 
 int heap_free(void* addr)
 {
-
+    u32 aligned_struct_size = ALIGN_UP(sizeof(struct heap_block), HEAP_ALIGNMENT);
+    addr = (void*)((u32)addr-aligned_struct_size);
+    if((u32)addr%HEAP_ALIGNMENT)
+    {
+        return ERRINV;
+    }
+    struct heap_block* block = (struct heap_block*)addr;
+    block->free=1;
+    if(block->next!=NULL)
+    {
+        if(block->next->free==1 && (u64)block+block->size+aligned_struct_size == (u64)block->next)
+        {
+            if(block->next==header.tail)
+            {
+                header.tail = block;
+            }
+            block->size += aligned_struct_size + block->next->size;
+            if(block->next->next!=NULL)
+            {
+                block->next->next->prev = block;
+            }
+            block->next = block->next->next;
+        }
+    }
+    if(block->prev!=NULL)
+    {
+        
+        if(block->prev->free==1 && (u64)block->prev+block->prev->size+aligned_struct_size == (u64)block)
+        {
+            if(block==header.tail)
+            {
+                header.tail = block->prev;
+            }
+            block->prev->size += aligned_struct_size + block->size;
+            if(block->next!=NULL)
+            {
+                block->next->prev = block->prev;
+            }
+            block->prev->next = block->next;
+        }
+    }
+    return SUCCESS;
 }
