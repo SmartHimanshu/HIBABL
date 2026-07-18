@@ -4,7 +4,7 @@ LD  := i686-elf-ld
 CFLAGS = -ffreestanding -O0 -g -Wall -Wextra
 ASFLAGS = -g
 
-FILES = $(BIN_DIR)/startup.o $(BIN_DIR)/main.o $(BIN_DIR)/console.o $(BIN_DIR)/string.o $(BIN_DIR)/bioscall.o $(BIN_DIR)/mmap.o $(BIN_DIR)/mm.o $(BIN_DIR)/terminal.o $(BIN_DIR)/lba.o $(BIN_DIR)/libc.o
+FILES = $(BIN_DIR)/startup.o $(BIN_DIR)/main.o $(BIN_DIR)/console.o $(BIN_DIR)/string.o $(BIN_DIR)/bioscall.o $(BIN_DIR)/mmap.o $(BIN_DIR)/mm.o $(BIN_DIR)/terminal.o $(BIN_DIR)/lba.o $(BIN_DIR)/libc.o $(BIN_DIR)/chs.o $(BIN_DIR)/disk.o
 
 all: $(BUILD_DIR)/core.bin
 
@@ -40,4 +40,10 @@ $(BIN_DIR)/lba.o: $(CORE_DIR)/disk/lba.c
 	$(CC) $(INCLUDE_DIR) $(CFLAGS) -std=gnu99 -c $< -o $@
 
 $(BIN_DIR)/libc.o: $(CORE_DIR)/kern/libc.c
+	$(CC) $(INCLUDE_DIR) $(CFLAGS) -std=gnu99 -c $< -o $@
+
+$(BIN_DIR)/chs.o: $(CORE_DIR)/disk/chs.c
+	$(CC) $(INCLUDE_DIR) $(CFLAGS) -std=gnu99 -c $< -o $@
+
+$(BIN_DIR)/disk.o: $(CORE_DIR)/disk/disk.c
 	$(CC) $(INCLUDE_DIR) $(CFLAGS) -std=gnu99 -c $< -o $@

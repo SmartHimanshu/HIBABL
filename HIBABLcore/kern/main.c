@@ -1,5 +1,5 @@
 #include <HIBABL/terminal/terminal.h>
-#include <HIBABL/disk/lba.h>
+#include <HIBABL/disk/disk.h>
 #include <HIBABL/machine/int.h>
 #include <HIBABL/memory/mmap.h>
 #include <HIBABL/memory/mm.h>
@@ -10,8 +10,9 @@ kmain()
     terminal_init();
     printk("Welcome to HIBA bootloader!\n");
     allocator_init();
+    disk_geometry_init();
     void* ptr = dmalloc(512);
-    lba_read_to_addr((void*)0x1000000, 1, 1);
+    disk_read(ptr, 1, 0);
     dfree(ptr);
     while(1) { };
 }

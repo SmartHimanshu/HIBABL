@@ -214,6 +214,7 @@ LOCAL(copy):
 	popw	%ds
 	popa
 
+
     jmp     HIBABL_MACHINE_STAGE2_ADDR
 LOCAL(die):
     cli
