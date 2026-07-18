@@ -14,9 +14,10 @@ void lba_read_to_disk_buffer(u64 lba_addr)
     DAP.transfer_offset = 0;
     DAP.transfer_segment = HIBABL_MACHINE_DISK_BUFFER_SEG;
     
-    struct bios_regs regs;
+    struct bios_regs regs = {0};
     regs.esi = (u32)(&DAP)&0xFFFF;
     regs.ds = ((u32)(&DAP)>>16)&0xFFFF;
+    regs.edx = boot_drive;
     regs.eax = 0x4200;
     regs.flags = DEFAULT_INT_FLAGS;
 

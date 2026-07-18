@@ -11,7 +11,7 @@ kmain()
     printk("Welcome to HIBA bootloader!\n");
     allocator_init();
     void* ptr = dmalloc(512);
-    lba_read_to_addr((void*)0x00, 1, 0);
+    lba_read_to_addr((void*)0x1000000, 1, 1);
     dfree(ptr);
     while(1) { };
 }
