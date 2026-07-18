@@ -2,9 +2,9 @@
 take its pointer comfortably. */
 
 #include <HIBABL/types.h>
-#include <HIBABL/mmap.h>
-#include <HIBABL/memory.h>
-#include <HIBABL/int.h>
+#include <HIBABL/memory/mmap.h>
+#include <HIBABL/machine/memory.h>
+#include <HIBABL/machine/int.h>
 
 struct e820_mm map = {0, (struct e820_entry*)HIBABL_MEMORY_MACHINE_E820_ADDR};
 

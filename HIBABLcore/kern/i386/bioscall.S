@@ -1,5 +1,5 @@
 
-#include <HIBABL/symbol.h>
+#include <HIBABL/machine/symbol.h>
 
 .code32
 

@@ -1,8 +1,8 @@
 
 .file "startup.S"
 
-#include <HIBABL/symbol.h>
-#include <HIBABL/memory.h>
+#include <HIBABL/machine/symbol.h>
+#include <HIBABL/machine/memory.h>
 
 .code16
 
@@ -10,6 +10,11 @@
 
 .globl start
 start:
+
+    /*Save the addressing mode*/
+    movb 16(%si), %al
+    movb %al, addressing_mode
+
     cli
 
     xorw %ax, %ax
@@ -25,7 +30,8 @@ start:
     
 
     /* save the boot drive */
-	movb	%dl, LOCAL(boot_drive)
+	movb	%dl, boot_drive
+
 
 	/* reset disk system (%ah = 0) */
 	int	$0x13
@@ -53,5 +59,10 @@ hibabl_a20:
     outb %al, $0x92
     ret
 
-LOCAL(boot_drive):
+    .globl boot_drive
+boot_drive:
+    .byte 0
+
+    .globl addressing_mode
+addressing_mode:
     .byte 0

@@ -1,7 +1,7 @@
 .file "modeswitch.S"
 
-#include <HIBABL/memory.h>
-#include <HIBABL/symbol.h>
+#include <HIBABL/machine/memory.h>
+#include <HIBABL/machine/symbol.h>
 
 /*
 +----------------------------------------------------------------------------------+

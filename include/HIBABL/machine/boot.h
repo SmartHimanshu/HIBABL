@@ -1,7 +1,7 @@
 #ifndef HIBABL_CORE_BOOT_H
 #define HIBABL_CORE_BOOT_H
 
-#include <HIBABL/offset.h>
+#include <HIBABL/machine/offset.h>
 
 /*
 
@@ -12,6 +12,7 @@ The segment of the disk buffer. Since different platforms use different sector s
 a safe place. Disk buffer is 32k long and at a 64k boundary to prevent crashes.
 */
 #define HIBABL_MACHINE_DISK_BUFFER_SEG 0x7000
+#define HIBABL_MACHINE_DISK_BUFFER_ADDR HIBABL_MACHINE_DISK_BUFFER_SEG<<4
 /*
 The stack segment for our beautiful stack.
 */

@@ -1,7 +1,7 @@
 .file "boot.S"
 
-#include <HIBABL/boot.h>
-#include <HIBABL/symbol.h>
+#include <HIBABL/machine/boot.h>
+#include <HIBABL/machine/symbol.h>
 
 #define MSG(x) movw $x, %si; call LOCAL(message)
 

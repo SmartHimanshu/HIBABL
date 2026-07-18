@@ -1,7 +1,7 @@
 #ifndef HIBABL_MEMORY_MAP_H
 #define HIBABL_MEMORY_MAP_H
 
-#include "types.h"
+#include <HIBABL/types.h>
 
 #define E820_USABLE_RAM         1
 #define E820_RESERVED           2

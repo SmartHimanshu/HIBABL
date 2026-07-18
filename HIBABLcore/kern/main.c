@@ -1,15 +1,17 @@
-#include <HIBABL/console.h>
-#include <HIBABL/int.h>
-#include <HIBABL/mmap.h>
-#include <HIBABL/mm.h>
+#include <HIBABL/terminal/terminal.h>
+#include <HIBABL/disk/lba.h>
+#include <HIBABL/machine/int.h>
+#include <HIBABL/memory/mmap.h>
+#include <HIBABL/memory/mm.h>
 
 void __attribute__ ((noreturn))
 kmain()
 {
-    console_init();
-    console_print(console_make_color(VGA_WHITE, VGA_BLACK), "Welcome to HIBA bootloader!\n");
-    mmap_iterate();
-    pmm_init();
-    heap_init();
+    terminal_init();
+    printk("Welcome to HIBA bootloader!\n");
+    allocator_init();
+    void* ptr = dmalloc(512);
+    lba_read_to_addr((void*)0x00, 1, 0);
+    dfree(ptr);
     while(1) { };
 }

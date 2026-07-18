@@ -1,5 +1,5 @@
-#include <HIBABL/console.h>
-#include <HIBABL/string.h>
+#include <HIBABL/terminal/console.h>
+#include <HIBABL/system/string.h>
 
 u16* vga_video_mem;
 u16 terminal_x = 0;
@@ -99,7 +99,7 @@ void console_print_dec(u8 color, int x)
         a++;
     }
     a--;
-    if(buf[0])
+    if(buf[0]=='-')
     {
         console_write_char(color, buf[0]);
     }
@@ -112,12 +112,12 @@ void console_print_dec(u8 color, int x)
 
 void console_print_hex(u8 color, u64 x)
 {
-    char buf[18];
+    char buf[16];
     int a = 0;
     for(int i = 0; i < 16; i++)
     {
         u8 nice = (x>>(4*i) & 0xF);
-        if(nice>10)
+        if(nice>=10)
         {
             buf[a] = 'a'+nice-10;
         }

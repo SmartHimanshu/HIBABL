@@ -1,7 +1,7 @@
 #ifndef HIBABL_MEMORY_ALLOCATOR_H
 #define HIBABL_MEMORY_ALLOCATOR_H
 
-#include "types.h"
+#include <HIBABL/types.h>
 
 #define HEAP_ALIGNMENT 8
 
@@ -37,5 +37,6 @@ void heap_init(void);
 int heap_free(void* addr);
 void* dmalloc(size_t size);
 int dfree(void* addr);
+void allocator_init(void);
 
 #endif

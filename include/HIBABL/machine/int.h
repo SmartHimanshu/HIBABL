@@ -1,7 +1,7 @@
 #ifndef HIBABL_MACHINE_BIOS_H
 #define HIBABL_MACHINE_BIOS_H
 
-#include "types.h"
+#include <HIBABL/types.h>
 
 struct bios_regs
 {

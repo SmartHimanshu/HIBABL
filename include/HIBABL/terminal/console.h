@@ -1,7 +1,7 @@
 #ifndef HIBABL_CONSOLE_H
 #define HIBABL_CONSOLE_H
 
-#include "types.h"
+#include <HIBABL/types.h>
 
 #define VGA_HEIGHT 20
 #define VGA_WIDTH 80
