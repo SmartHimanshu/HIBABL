@@ -1,0 +1,68 @@
+#ifndef HIBABL_FS_FAT32_H
+#define HIBABL_FS_FAT32_H
+
+#include <HIBABL/types.h>
+
+typedef struct fat32
+{
+    u16 bytes_per_sector;
+    u8 sectors_per_cluster;
+    u16 reserved_sectors;
+    u8 numFATs;
+    u32 sectors_of_volume;
+    u32 parition_addr;
+    u32 sectors_per_FAT;
+    u32 root_dir_cluster;
+
+} fat32 HIBABL_PACKED;
+
+struct fat32_bpb
+{
+    /* Jump instruction */
+    u8  jump_boot[3];
+
+    /* OEM name */
+    char     oem_name[8];
+
+    /* BIOS Parameter Block */
+    u16 bytes_per_sector;
+    u8  sectors_per_cluster;
+    u16 reserved_sector_count;
+    u8  num_fats;
+    u16 root_entry_count;
+    u16 total_sectors_16;
+    u8  media;
+    u16 fat_size_16;
+    u16 sectors_per_track;
+    u16 num_heads;
+    u32 hidden_sectors;
+    u32 total_sectors_32;
+
+    /* FAT32 Extended BPB */
+    u32 fat_size_32;
+    u16 ext_flags;
+    u16 fs_version;
+    u32 root_cluster;
+    u16 fs_info;
+    u16 backup_boot_sector;
+    u8  reserved[12];
+
+    u8  drive_number;
+    u8  reserved1;
+    u8  boot_signature;
+    u32 volume_id;
+    char     volume_label[11];
+    char     fs_type[8];
+
+    /* Boot code */
+    u8  boot_code[420];
+
+    /* Signature (0xAA55) */
+    u16 boot_sector_signature;
+
+} HIBABL_PACKED;
+
+
+void fat32_mount(struct fat32* info, u32 partition_lba);
+
+#endif
