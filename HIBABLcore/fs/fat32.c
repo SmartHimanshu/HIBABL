@@ -15,5 +15,16 @@ void fat32_mount(struct fat32* info, u32 partition_lba)
     info->sectors_of_volume = first_sector->total_sectors_16 | first_sector->total_sectors_32;
     info->sectors_per_cluster = first_sector->sectors_per_cluster;
     info->sectors_per_FAT = first_sector->fat_size_16 | first_sector->fat_size_32;
+    info->first_data_sector = partition_lba + info->reserved_sectors + (info->numFATs * info->sectors_per_FAT);
     dfree(buffer);
+}
+
+u32 fat32_cluster_to_lba(struct fat32* info, u32 cluster)
+{
+    return ((cluster - 2) * info->sectors_per_cluster) + info->parition_addr;
+}
+
+u32 fat32_next_cluster(struct fat32_fs* fs, u32 cluster, void* fat_table)
+{
+    
 }

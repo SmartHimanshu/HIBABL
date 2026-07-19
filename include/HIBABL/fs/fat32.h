@@ -13,6 +13,7 @@ typedef struct fat32
     u32 parition_addr;
     u32 sectors_per_FAT;
     u32 root_dir_cluster;
+    u32 first_data_sector;
 
 } fat32 HIBABL_PACKED;
 
