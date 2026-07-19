@@ -5,15 +5,17 @@
 
 typedef struct fat32
 {
-    u16 bytes_per_sector;
     u8 sectors_per_cluster;
-    u16 reserved_sectors;
     u8 numFATs;
+    u16 bytes_per_sector;
+    u16 reserved_sectors;
     u32 sectors_of_volume;
     u32 parition_addr;
     u32 sectors_per_FAT;
     u32 root_dir_cluster;
     u32 first_data_sector;
+    u32 entries_per_sector;
+    u32 fat_location;
 
 } fat32 HIBABL_PACKED;
 
@@ -63,7 +65,31 @@ struct fat32_bpb
 
 } HIBABL_PACKED;
 
+struct fat32_dir_entry
+{
+    char     name[8];
+    char     ext[3];
+
+    u8  attr;
+    u8  reserved;
+    u8  creation_tenths;
+    
+    u16 creation_time;
+    u16 creation_date;
+    u16 access_date;
+    u16 cluster_high;
+    u16 write_time;
+    u16 write_date;
+    u16 cluster_low;
+    
+    u32 size;
+} HIBABL_PACKED;
 
 void fat32_mount(struct fat32* info, u32 partition_lba);
+u32 fat32_cluster_to_lba(struct fat32* info, u32 cluster);
+u32 fat32_next_cluster(u32 cluster, u32* fat_table);
+void fat32_read_cluster(struct fat32* fs, void* addr, u32 cluster);
+int fat32_find(struct fat32* fs, u32 directory_cluster, const char* name, struct fat32_dir_entry* entry, u32* fat_table);
+
 
 #endif
