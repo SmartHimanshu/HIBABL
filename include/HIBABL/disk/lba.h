@@ -15,6 +15,5 @@ struct lba_dap
 
 extern u8 boot_drive;
 void lba_read_to_addr(void* addr, u32 num_sectors, u64 lba_addr);
-void lba_fast_read_to_addr(void* addr, u32 num_sectors, u64 lba_addr, u32 bytes_per_sector);
 
 #endif

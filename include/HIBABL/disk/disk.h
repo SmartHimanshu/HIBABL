@@ -5,7 +5,7 @@
 
 
 void disk_geometry_init(void);
-void disk_read(void* addr, u32 num_sectors, u64 address, u32 bytes_per_sector);
+void disk_read(void* addr, u32 num_sectors, u64 address);
 extern u8 addressing_mode;
 
 
