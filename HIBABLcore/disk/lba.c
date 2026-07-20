@@ -48,7 +48,6 @@ void lba_fast_read_to_addr(void* addr, u32 num_sectors, u64 lba_addr, u32 bytes_
     for(u32 i = 0; i < bios_cycles; i++)
     {
         current_address = (u32)addr+(127*bytes_per_sector*i);
-        panic("Error! Disk read failed! %x %x %x", lba_addr+(i*127), current_address>>4, current_address&0xF);
         lba_read_to_disk_buffer(lba_addr+(i*127), current_address>>4, current_address&0xF, 127);
     }
     if(remaining_sectors)

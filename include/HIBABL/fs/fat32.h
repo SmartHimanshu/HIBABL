@@ -91,7 +91,7 @@ struct fat32_file
     u32 file_size;
 } HIBABL_PACKED;
 
-void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table);
+void fat32_mount(struct fat32* info, u32 partition_lba);
 u32 fat32_cluster_to_lba(struct fat32* info, u32 cluster);
 u32 fat32_next_cluster(u32 cluster, u32* fat_table);
 void fat32_read_cluster(struct fat32* fs, void* addr, u32 cluster);

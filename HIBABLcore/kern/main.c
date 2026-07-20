@@ -10,6 +10,6 @@ kmain()
     printk("Welcome to HIBA bootloader!\n");
     allocator_init();
     disk_geometry_init();
-    fat32_main("CORE    BIN", (void*)0x400000, 1024, 2048);
+    printk("Have we succeded? : %d\n", fat32_main("CORE    BIN", (void*)0x400000, 1024, 2048));
     while(1) { };
 }

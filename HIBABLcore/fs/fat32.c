@@ -6,7 +6,7 @@
 #include <HIBABL/system/error.h>
 #include <HIBABL/terminal/terminal.h>
 
-void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
+void fat32_mount(struct fat32* info, u32 partition_lba)
 {
     void* buffer = dmalloc(512);
     disk_read(buffer, 1, partition_lba, 0);
@@ -27,11 +27,8 @@ void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
     info->fat_location = partition_lba + info->reserved_sectors;
     
     dfree(buffer);
-
-
-    fat_table = dmalloc(info->sectors_per_FAT*info->bytes_per_sector);
-    disk_read(fat_table, info->sectors_per_FAT, info->fat_location, info->bytes_per_sector);
 }
+
 
 u32 fat32_cluster_to_lba(struct fat32* info, u32 cluster)
 {
@@ -103,10 +100,14 @@ void fat32_read(struct fat32* fs, struct fat32_file* file, void* buffer, u32* fa
 
 int fat32_main(const char* filename, void* address, u32 bytes, u32 parition_lba)
 {
-    struct fat32* fs;
+    struct fat32* fs = dmalloc(sizeof(struct fat32));
     u32* fat_table;
     struct fat32_file file_data;
-    fat32_mount(fs, parition_lba, fat_table);
+    fat32_mount(fs, parition_lba);
+    fat_table = dmalloc(fs->sectors_per_FAT*fs->bytes_per_sector);
+    panic("Before");
+    disk_read(fat_table, fs->sectors_per_FAT, fs->fat_location, fs->bytes_per_sector);
+    panic("After");
     int res = fat32_open(fs, filename, &file_data, fat_table);
     fat32_read(fs, &file_data, address, fat_table, bytes);
     return res;
