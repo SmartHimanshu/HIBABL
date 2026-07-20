@@ -35,18 +35,25 @@ static void convert_lba_to_chs(u16 *cylinder, u8 *head, u8 *sector, u32 lba_addr
     *sector = (temp % sectors_per_track)+1;
 };
 
-void disk_read(void* addr, u32 num_sectors, u64 address)
+void disk_read(void* addr, u32 num_sectors, u64 address, u32 bytes_per_sector)
 {
-    if(addressing_mode)
+    if(!bytes_per_sector)
     {
-        lba_read_to_addr(addr, num_sectors, address);
+        if(addressing_mode)
+        {
+            lba_read_to_addr(addr, num_sectors, address);
+        }
+        else
+        {
+            u16 cylinder;
+            u8 head;
+            u8 sector;
+            convert_lba_to_chs(&cylinder, &head, &sector, (u32)address);
+            chs_read_to_addr(addr, num_sectors, cylinder, head, sector);
+        }
     }
     else
     {
-        u16 cylinder;
-        u8 head;
-        u8 sector;
-        convert_lba_to_chs(&cylinder, &head, &sector, (u32)address);
-        chs_read_to_addr(addr, num_sectors, cylinder, head, sector);
+        lba_fast_read_to_addr(addr, num_sectors, address, bytes_per_sector);
     }
 }

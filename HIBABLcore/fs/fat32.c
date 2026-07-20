@@ -4,11 +4,12 @@
 #include <HIBABL/system/string.h>
 #include <HIBABL/libc.h>
 #include <HIBABL/system/error.h>
+#include <HIBABL/terminal/terminal.h>
 
 void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
 {
     void* buffer = dmalloc(512);
-    disk_read(buffer, 1, partition_lba);
+    disk_read(buffer, 1, partition_lba, 0);
     
     struct fat32_bpb* first_sector = (struct fat32_bpb*)buffer;
     
@@ -27,8 +28,9 @@ void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
     
     dfree(buffer);
 
+
     fat_table = dmalloc(info->sectors_per_FAT*info->bytes_per_sector);
-    disk_read(fat_table, info->sectors_per_FAT, info->fat_location);
+    disk_read(fat_table, info->sectors_per_FAT, info->fat_location, info->bytes_per_sector);
 }
 
 u32 fat32_cluster_to_lba(struct fat32* info, u32 cluster)
@@ -43,7 +45,7 @@ u32 fat32_next_cluster(u32 cluster, u32* fat_table)
 
 void fat32_read_cluster(struct fat32* fs, void* addr, u32 cluster)
 {
-    disk_read(addr, fs->sectors_per_cluster, fat32_cluster_to_lba(fs, cluster));
+    disk_read(addr, fs->sectors_per_cluster, fat32_cluster_to_lba(fs, cluster), fs->bytes_per_sector);
 }
 
 
@@ -90,7 +92,7 @@ void fat32_read(struct fat32* fs, struct fat32_file* file, void* buffer, u32* fa
     u32 current_cluster = file->first_cluster;
     while(remaining_bytes>0)
     {
-        disk_read(buffer, fs->sectors_per_cluster, fat32_cluster_to_lba(fs, current_cluster));
+        disk_read(buffer, fs->sectors_per_cluster, fat32_cluster_to_lba(fs, current_cluster), fs->bytes_per_sector);
         buffer += bytes_per_cluster;
         remaining_bytes -= bytes_per_cluster;
         current_cluster = fat32_next_cluster(current_cluster, fat_table);
