@@ -4,7 +4,7 @@
 #define SUCCESS 1
 
 #define ERRINV -1
-
+#define ERRNF -2
 
 
 
