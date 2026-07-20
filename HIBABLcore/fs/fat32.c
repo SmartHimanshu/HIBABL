@@ -31,6 +31,7 @@ void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
     
 
     fat_table = dmalloc(info->sectors_per_FAT*info->bytes_per_sector);
+    printk("Size of FAT: %x", info->sectors_per_FAT*info->bytes_per_sector);
     disk_read(fat_table, info->sectors_per_FAT, info->fat_location);
 }
 

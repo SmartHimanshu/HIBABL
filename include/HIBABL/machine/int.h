@@ -19,6 +19,9 @@ struct bios_regs
 
 #define DEFAULT_INT_FLAGS 0
 
+#define CF_FLAG 1
+
+
 void __attribute__((regparm(3))) bios_interrupt(u8 intno,
                                                   struct bios_regs *regs);
 
