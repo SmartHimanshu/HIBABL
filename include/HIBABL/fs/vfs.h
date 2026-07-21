@@ -14,5 +14,13 @@ struct parition_entry
     u32 size;
 } HIBABL_PACKED;
 
+typedef struct file_path
+{
+    char* name;
+    struct file_path* next;
+} file_path HIBABL_PACKED;
+
+
+void fat32_parse_path(const char* filename, struct file_path* path);
 
 #endif

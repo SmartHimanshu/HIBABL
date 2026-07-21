@@ -13,6 +13,7 @@ give malloc next 1MiB if we run out of space.
 #include <HIBABL/system/magic.h>
 #include <HIBABL/system/error.h>
 #include <HIBABL/terminal/terminal.h>
+#include <HIBABL/libc.h>
 
 u8* page_info_bitmap;
 struct heap_header header;
@@ -299,6 +300,34 @@ int heap_magic_check(void)
     return SUCCESS;
 }
 
+void* heap_realloc(void* ptr, size_t size)
+{
+    if(ptr==NULL)
+    {
+        return heap_malloc(size);
+    }
+
+    if(size==0)
+    {
+        heap_free(ptr);
+        return NULL;
+    }
+
+    struct heap_block* block = ptr - sizeof(struct heap_block);
+    u32 old_size = block->size;
+
+    void* res = heap_malloc(size);
+
+    if (res == NULL)
+        return NULL;
+
+    memcpy(res, ptr, min(size, old_size));
+
+    heap_free(ptr);
+
+    return res;
+}
+
 void allocator_init(void)
 {
     mmap_iterate();
@@ -318,4 +347,28 @@ int dfree(void* addr)
 {
     printd("Freed memory at address: %x\n", (u64)addr);
     return heap_free(addr);
+}
+
+void* drealloc(void* ptr, size_t size)
+{
+    void* new_ptr = heap_realloc(ptr, size);
+    printd("Reallocated memory with:\nOf size : %d\nFrom address : %d\nTo address : %d\n", size, (u64)ptr, (u64)new_ptr);
+    return new_ptr;
+}
+
+/* These are the master malloc functions used by the core. */
+
+void* kmalloc(size_t size)
+{
+    return heap_malloc(size);
+}
+
+int kfree(void* addr)
+{
+    return heap_free(addr);
+}
+
+void* krealloc(void* ptr, size_t size)
+{
+    return heap_realloc(ptr, size); 
 }

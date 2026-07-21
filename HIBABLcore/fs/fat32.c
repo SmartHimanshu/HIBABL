@@ -8,7 +8,7 @@
 
 void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
 {
-    void* buffer = dmalloc(512);
+    void* buffer = kmalloc(512);
     disk_read(buffer, 1, partition_lba);
     
     struct fat32_bpb* first_sector = (struct fat32_bpb*)buffer;
@@ -26,12 +26,11 @@ void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
     info->entries_per_sector = info->bytes_per_sector * info->sectors_per_cluster/sizeof(struct fat32_dir_entry);
     info->fat_location = partition_lba + info->reserved_sectors;
     
-    dfree(buffer);
+    kfree(buffer);
 
     
 
-    fat_table = dmalloc(info->sectors_per_FAT*info->bytes_per_sector);
-    printk("Size of FAT: %x", info->sectors_per_FAT*info->bytes_per_sector);
+    fat_table = kmalloc(info->sectors_per_FAT*info->bytes_per_sector);
     disk_read(fat_table, info->sectors_per_FAT, info->fat_location);
 }
 
@@ -56,7 +55,7 @@ int fat32_find(struct fat32* fs, u32 directory_cluster, const char* name, struct
     u32 current_cluster = directory_cluster;
     while(current_cluster<0x0FFFFFF8)
     {
-        struct fat32_dir_entry* entries = dmalloc(fs->entries_per_sector*fs->bytes_per_sector);
+        struct fat32_dir_entry* entries = kmalloc(fs->entries_per_sector*fs->bytes_per_sector);
         fat32_read_cluster(fs, (void*)entries, current_cluster);
         for(int i = 0; i < fs->entries_per_sector; i++)
         {
@@ -69,11 +68,11 @@ int fat32_find(struct fat32* fs, u32 directory_cluster, const char* name, struct
                 continue;
             }
             memcpy(entry, &entries[i], sizeof(struct fat32_dir_entry));
-            dfree(entries);
+            kfree(entries);
             return SUCCESS;
         }
         current_cluster = fat32_next_cluster(current_cluster, fat_table);
-        dfree(entries);
+        kfree(entries);
     }    
     return ERRNF;
 }

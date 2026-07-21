@@ -32,11 +32,20 @@ struct heap_header
 void pmm_init(void);
 void* pmm_alloc_page(void);
 void* pmm_alloc_pages(size_t count);
+
 void* heap_malloc(size_t size);
 void heap_init(void);
 int heap_free(void* addr);
+void* heap_realloc(void* ptr, size_t size);
+
 void* dmalloc(size_t size);
 int dfree(void* addr);
+void* drealloc(void* ptr, size_t size);
+
+void* kmalloc(size_t size);
+int kfree(void* addr);
+void* krealloc(void* ptr, size_t size);
+
 void allocator_init(void);
 
 #endif
