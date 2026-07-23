@@ -44,7 +44,9 @@ start:
 
     call hibabl_a20
 
-    jmp kmain
+    calll kmain
+
+    jmp 0x400000
 die:
     jmp die
 

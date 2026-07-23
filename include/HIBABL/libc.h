@@ -5,5 +5,6 @@
 
 void memcpy(void *to_addr, void *from_addr, u32 bytes);
 u64 min(u64 a, u64 b);
+int memcmp(void* a, void* b, u32 bytes);
 
 #endif

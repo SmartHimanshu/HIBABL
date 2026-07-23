@@ -102,14 +102,18 @@ void fat32_read(struct fat32* fs, struct fat32_file* file, void* buffer, u32* fa
 
 //This is gonna be our last function and its sole job will be to load our main kernel into memory 
 
-int fat32_main(const char* filename, void* address, u32 bytes, u32 parition_lba)
+int fat32_main(struct fat32* fs, u32* fat_table, const char* filename, void* address, u32 bytes, u32 parition_lba)
 {
-    struct fat32* fs;
-    u32* fat_table;
     struct fat32_file file_data;
     fat32_mount(fs, parition_lba, fat_table);
-    
+    printd("After mount");
     int res = fat32_open(fs, filename, &file_data, fat_table);
     fat32_read(fs, &file_data, address, fat_table, bytes);
     return res;
+}
+
+void fat32_free(struct fat32* fs, u32* fat_table)
+{
+    kfree(fs);
+    kfree(fat_table);
 }

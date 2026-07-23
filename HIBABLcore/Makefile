@@ -46,7 +46,7 @@ $(BUILD_DIR)/disk.img: $(BUILD_DIR)/boot.bin $(BUILD_DIR)/diskboot.bin $(BUILD_D
 	dd if=$(BUILD_DIR)/diskboot.bin of=$@ bs=512 seek=1 conv=notrunc
 	dd if=$(BUILD_DIR)/core.bin of=$@ bs=512 seek=2 conv=notrunc
 
-	mcopy -i $@@@1M $(BUILD_DIR)/core.bin ::/CORE.BIN
+	mcopy -o -i $(BUILD_DIR)/disk.img@@1048576 $(CORE_DIR)/kernel.bin ::KERNEL.BIN
 
 clean:
 	$(MAKE) -C $(BOOT_DIR) clean

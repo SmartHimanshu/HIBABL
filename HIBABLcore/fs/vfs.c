@@ -27,5 +27,7 @@ void fat32_parse_path(const char* filename, struct file_path* path)
 
 void vfs_main(const char* filename, void* address, u32 bytes, u8 fs)
 {
-    fat32_main(filename, address, bytes, table_addr[fs].starting_lba);
+    struct fat32* fss;
+    u32* fat_table;
+    fat32_main(fss, fat_table, filename, address, bytes, table_addr[fs].starting_lba);
 }

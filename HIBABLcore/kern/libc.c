@@ -15,3 +15,17 @@ u64 min(u64 a, u64 b)
 {
     return (a < b) ? a : b;
 }
+
+int memcmp(void* a, void* b, u32 bytes)
+{
+    u8* _a = (u8*)a;
+    u8* _b = (u8*)b;
+    for(u32 i = 0; i < bytes; i++)
+    {
+        if(_a[i]!=_b[i])
+        {
+            return (_a[i] > _b[i]) ? 1 : -1;
+        }
+    }
+    return 0;
+}
