@@ -154,7 +154,7 @@ struct screen_info
 
 } HIBABL_PACKED;
 
-int load_hibaos(const char* filename, struct boot_info* boot_info);
+int load_hibaos(const char* filename, struct boot_info** boot_info);
 
 #define HIBABOOT_HEADER_MAGIC 0x544F4F4241424948ULL
 
@@ -162,7 +162,7 @@ int load_hibaos(const char* filename, struct boot_info* boot_info);
 #define HIBABOOT_HEADER_SI 1<<1
 #define HIBABOOT_HEADER_ACPI 1<<2
 
-#define BOOTINFO_HEADER_MAGIC 'BOOTINFO'
+#define BOOTINFO_HEADER_MAGIC 0x4F464E49544F4F42ULL
 
 #define BOOTINFO_SCREEN_INFO_NONE 0
 #define BOOTINFO_SCREEN_INFO_FRAMEBUFFER 1

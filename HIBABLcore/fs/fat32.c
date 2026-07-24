@@ -30,8 +30,6 @@ void fat32_mount(struct fat32* info, u32 partition_lba, u32** fat_table)
     *fat_table = kmalloc(info->sectors_per_FAT*info->bytes_per_sector);
     disk_read((void*)*fat_table, info->sectors_per_FAT, (u64)info->fat_location);
 
-    printd("SPC=%x\n", info->sectors_per_cluster);
-
     kfree(buffer);
 }
 

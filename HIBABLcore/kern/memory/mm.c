@@ -365,12 +365,12 @@ void* drealloc(void* ptr, size_t size)
 
 void* kmalloc(size_t size)
 {
-    return heap_malloc(size);
+    return dmalloc(size);
 }
 
 int kfree(void* addr)
 {
-    return heap_free(addr);
+    return dfree(addr);
 }
 
 void* krealloc(void* ptr, size_t size)

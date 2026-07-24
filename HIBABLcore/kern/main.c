@@ -13,7 +13,7 @@ struct boot_info* kmain()
     allocator_init();
     disk_geometry_init();
     struct boot_info* boot_info;
-    int res = load_hibaos("KERNEL  BIN", boot_info);
+    int res = load_hibaos("KERNEL  BIN", &boot_info);
     printk("Have we succeded in loading the kernel? : %d\n", res);
     return boot_info;
 }
