@@ -3,7 +3,7 @@
 
 
 /* This is protected mode stack*/
-#define HIBABL_MEMORY_MACHINE_PM_STACK 0x70000
+#define HIBABL_MEMORY_MACHINE_PM_STACK 0x90000
 /* This is real mode stack. */
 #define HIBABL_MEMORY_MACHINE_REAL_STACK 0x2000 - 0x10
 

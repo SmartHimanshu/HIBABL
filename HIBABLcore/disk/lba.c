@@ -10,8 +10,7 @@ void* disk_buffer_addr = (void*)(HIBABL_MACHINE_DISK_BUFFER_ADDR);
 void lba_read_to_disk_buffer(u64 lba_addr, u32 num_sectors)
 {
     u32 sectors = num_sectors;
-    printd("SECTORS=%x\n", sectors);
-    struct lba_dap DAP;
+    struct lba_dap DAP = {0};
     DAP.always_0 = 0;
     DAP.lba_addr = lba_addr;
     DAP.num_sectors = num_sectors;
@@ -31,13 +30,13 @@ void lba_read_to_disk_buffer(u64 lba_addr, u32 num_sectors)
     if(regs.flags & CF_FLAG)
     {
         panic("Disk error! \nlba address: %x \nsector size: %x\n", lba_addr, num_sectors);
+        while(1) ;
     }
 
 }
 
 void lba_read_to_addr(void* addr, u32 num_sectors, u64 lba_addr)
 {
-    printd("Disk read done with sector count: %x\n", num_sectors%127);
     for(u32 i = 0; i < num_sectors/127; i++)
     {
         lba_read_to_disk_buffer(lba_addr + (i * 127), 127);

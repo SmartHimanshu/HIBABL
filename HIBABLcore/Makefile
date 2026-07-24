@@ -33,7 +33,7 @@ $(BUILD_DIR)/disk.img: $(BUILD_DIR)/boot.bin $(BUILD_DIR)/diskboot.bin $(BUILD_D
 
 	# Format the FAT32 partition
 	LOOP=$$(sudo losetup --find --show -P $@); \
-	sudo mkfs.fat -F 32 $${LOOP}p1; \
+	sudo mkfs.fat -F 32 -s 32 $${LOOP}p1; \
 	sudo losetup -d $$LOOP
 
 	# Install our boot sector (only first 446 bytes of code,

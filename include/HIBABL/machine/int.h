@@ -17,7 +17,7 @@ struct bios_regs
     u32 edx;
 };
 
-#define DEFAULT_INT_FLAGS 0
+#define DEFAULT_INT_FLAGS 0x200
 
 #define CF_FLAG 1
 

@@ -102,7 +102,7 @@ static void mark_pages_used(size_t start, size_t end)
         page_info_bitmap[end/8] |= (1<<bit);
     }
     size_t sizee = ((end-(end%8)) - (start+(start%8)))/8;
-    for(u8 i = 0; i < sizee; i++)
+    for(size_t i = 0; i < sizee; i++)
     {
         page_info_bitmap[((start+(start%8))/8)+i] = 0xFF;
     }
@@ -247,6 +247,11 @@ int heap_free(void* addr)
         return ERRINV;
     }
     struct heap_block* block = (struct heap_block*)addr;
+    if(block->block_magic != HEAP_BLOCK_MAGIC)
+    {
+        panic("Valid heap not passed\n");
+        return ERRINV;
+    }
     block->free=1;
     if(block->next!=NULL)
     {

@@ -1,10 +1,22 @@
 #include <HIBABL/terminal/console.h>
 #include <HIBABL/system/string.h>
+#include <HIBABL/libc.h>
 
 u16* vga_video_mem;
 u16 terminal_x = 0;
 u16 terminal_y = 0;
+void scroll_screen(void) {
+    
+    // Move rows 1-24 up to rows 0-23
+    memcpy(vga_video_mem , vga_video_mem + VGA_WIDTH, (VGA_HEIGHT - 1) * VGA_WIDTH * sizeof(u16));
+    
+    // Clear the last row (row 24)
+    for (int x = 0; x < VGA_WIDTH; x++) {
+        vga_video_mem[(VGA_HEIGHT - 1) * VGA_WIDTH + x] = (0x07 << 8) | ' '; // White on black space
+    }
 
+    terminal_y-=1;
+}
 
 u8 console_make_color(u8 text_color, u8 bg_color)
 {
@@ -33,6 +45,10 @@ u8 console_get_color(u16 x, u16 y)
 
 void console_write_char(u8 color, u8 character)
 {
+    if(terminal_y>=VGA_HEIGHT)
+    {
+        scroll_screen();
+    }
     if(character=='\n')
     {
         terminal_x = 0;

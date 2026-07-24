@@ -3,6 +3,7 @@
 
 #include <HIBABL/machine/symbol.h>
 #include <HIBABL/machine/memory.h>
+#include <HIBABL/machine/offset.h>
 
 .code16
 
@@ -46,7 +47,7 @@ start:
 
     calll kmain
 
-    jmp 0x400000
+    jmp HIBABL_MACHINE_KERNEL_ADDR
 die:
     jmp die
 

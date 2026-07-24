@@ -36,8 +36,6 @@ int get_vbe_mode(struct vbe_info* buffer)
     regs.es = ((u32)buffer>>4)&0xFFFF;
     regs.edi = (u32)buffer&0xF;
     
-    printd("buffer=%x\n", buffer);
-    printd("es=%x di=%x\n", regs.es, regs.edi);
 
     bios_interrupt(0x10, &regs);
     
@@ -86,19 +84,18 @@ int load_hibaos(const char* filename, struct boot_info* boot_info)
     boot_info->si = NULL;
     boot_info->mm = NULL;    
 
-    struct fat32* fs;
-    u32* fat_entry;
+    struct fat32** fs;
+    u32** fat_entry;
 
-    int res = fat32_main(fs, fat_entry, filename, (void*)0x400000, 1024, 2048);
-    
-    printd("Here we check for fat32 loading: %d\n", res);
+    int res = fat32_main(fs, fat_entry, filename, (void*)HIBABL_MACHINE_KERNEL_ADDR, 512, 2048);
+    fat32_free(*fs, *fat_entry);
 
     if(!res) return 0;
 
-    void* ptr = (void*)0x400000;
+    void* ptr = (void*)HIBABL_MACHINE_KERNEL_ADDR;
     struct hibaboot_header* header = ptr;
 
-    if(header->header_magic)
+    if(header->header_magic==HIBABOOT_HEADER_MAGIC)
     {
         if(header->flags&HIBABOOT_HEADER_E820)
         {
@@ -148,14 +145,16 @@ int load_hibaos(const char* filename, struct boot_info* boot_info)
             }
             kfree(best_mode);
         }
-
-        fat32_main(fs, fat_entry, filename, (void*)0x400000, 1024*1024*10, 2048);
-        fat32_free(fs, fat_entry);
+        struct fat32** new_fs;
+        u32** new_fat;
+        fat32_main(new_fs, new_fat, filename, (void*)HIBABL_MACHINE_KERNEL_ADDR, 1024*1024*10, 2048);
+        fat32_free(*new_fs, *new_fat);
         return 1;
     }
     else
     {
-        printd("Did we not found the magic?: %x\n", header->header_magic);
+        printd("Did we not found the magic?: %l\n", header->header_magic);
+        printd("Magic: %l\n", HIBABOOT_HEADER_MAGIC);
         return 0;
     }
 }

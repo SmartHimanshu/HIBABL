@@ -6,7 +6,7 @@
 #include <HIBABL/system/error.h>
 #include <HIBABL/terminal/terminal.h>
 
-void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
+void fat32_mount(struct fat32* info, u32 partition_lba, u32** fat_table)
 {
     void* buffer = kmalloc(512);
     disk_read(buffer, 1, partition_lba);
@@ -18,20 +18,21 @@ void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table)
     info->parition_addr = partition_lba;
     info->reserved_sectors = first_sector->reserved_sector_count;
     info->root_dir_cluster = first_sector->root_cluster;
-    info->sectors_of_volume = first_sector->total_sectors_16 | first_sector->total_sectors_32;
+    info->sectors_of_volume = first_sector->total_sectors_16 ? first_sector->total_sectors_16 : first_sector->total_sectors_32;
     info->sectors_per_cluster = first_sector->sectors_per_cluster;
-    info->sectors_per_FAT = first_sector->fat_size_16 | first_sector->fat_size_32;
-    
+    info->sectors_per_FAT = first_sector->fat_size_16 ? first_sector->fat_size_16 : first_sector->fat_size_32;
     info->first_data_sector = partition_lba + info->reserved_sectors + (info->numFATs * info->sectors_per_FAT);
     info->entries_per_sector = info->bytes_per_sector * info->sectors_per_cluster/sizeof(struct fat32_dir_entry);
     info->fat_location = partition_lba + info->reserved_sectors;
     
-    kfree(buffer);
 
     
+    *fat_table = kmalloc(info->sectors_per_FAT*info->bytes_per_sector);
+    disk_read((void*)*fat_table, info->sectors_per_FAT, (u64)info->fat_location);
 
-    fat_table = kmalloc(info->sectors_per_FAT*info->bytes_per_sector);
-    disk_read(fat_table, info->sectors_per_FAT, info->fat_location);
+    printd("SPC=%x\n", info->sectors_per_cluster);
+
+    kfree(buffer);
 }
 
 u32 fat32_cluster_to_lba(struct fat32* info, u32 cluster)
@@ -91,7 +92,8 @@ void fat32_read(struct fat32* fs, struct fat32_file* file, void* buffer, u32* fa
     u32 bytes_per_cluster = fs->bytes_per_sector*fs->sectors_per_cluster;
     u32 remaining_bytes = bytes;
     u32 current_cluster = file->first_cluster;
-    while(remaining_bytes>0)
+    
+    while(remaining_bytes>0&&current_cluster<0x0FFFFFF8)
     {
         disk_read(buffer, fs->sectors_per_cluster, fat32_cluster_to_lba(fs, current_cluster));
         buffer += bytes_per_cluster;
@@ -102,13 +104,13 @@ void fat32_read(struct fat32* fs, struct fat32_file* file, void* buffer, u32* fa
 
 //This is gonna be our last function and its sole job will be to load our main kernel into memory 
 
-int fat32_main(struct fat32* fs, u32* fat_table, const char* filename, void* address, u32 bytes, u32 parition_lba)
+int fat32_main(struct fat32** fs, u32** fat_table, const char* filename, void* address, u32 bytes, u32 parition_lba)
 {
     struct fat32_file file_data;
-    fat32_mount(fs, parition_lba, fat_table);
-    printd("After mount");
-    int res = fat32_open(fs, filename, &file_data, fat_table);
-    fat32_read(fs, &file_data, address, fat_table, bytes);
+    *fs = kmalloc(sizeof(struct fat32));
+    fat32_mount(*fs, parition_lba, fat_table);
+    int res = fat32_open(*fs, filename, &file_data, *fat_table);
+    fat32_read(*fs, &file_data, address, *fat_table, bytes);
     return res;
 }
 

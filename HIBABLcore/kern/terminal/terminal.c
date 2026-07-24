@@ -34,6 +34,11 @@ void vprintk(const char* fmt, va_list args)
                     console_print_char(color, va_arg(args, int));
                     break;
                 }
+                case 'l':
+                {
+                    console_print_hex(color, va_arg(args, u64));
+                    break;
+                }
                 case 's':
                 {
                     console_print_string(color, va_arg(args, char*));

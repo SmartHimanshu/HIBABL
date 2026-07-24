@@ -3,7 +3,7 @@
 
 #include <HIBABL/types.h>
 
-#define VGA_HEIGHT 20
+#define VGA_HEIGHT 25
 #define VGA_WIDTH 80
 
 

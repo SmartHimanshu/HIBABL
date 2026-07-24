@@ -91,13 +91,13 @@ struct fat32_file
     u32 file_size;
 } HIBABL_PACKED;
 
-void fat32_mount(struct fat32* info, u32 partition_lba, u32* fat_table);
+void fat32_mount(struct fat32* info, u32 partition_lba, u32** fat_table);
 u32 fat32_cluster_to_lba(struct fat32* info, u32 cluster);
 u32 fat32_next_cluster(u32 cluster, u32* fat_table);
 void fat32_read_cluster(struct fat32* fs, void* addr, u32 cluster);
 int fat32_find(struct fat32* fs, u32 directory_cluster, const char* name, struct fat32_dir_entry* entry, u32* fat_table);
 int fat32_open(struct fat32* fs, const char* name, struct fat32_file* file, u32* fat_table);
 void fat32_read(struct fat32* fs, struct fat32_file* file, void* buffer, u32* fat_table, u32 bytes);
-int fat32_main(struct fat32* fs, u32* fat_table, const char* filename, void* address, u32 bytes, u32 parition_lba);
+int fat32_main(struct fat32** fs, u32** fat_table, const char* filename, void* address, u32 bytes, u32 parition_lba);
 void fat32_free(struct fat32* fs, u32* fat_table);
 #endif

@@ -126,5 +126,5 @@ LOCAL(core_address_pointer):
 
 LOCAL(core_size_params):
     .long 2, 0
-    .word 32
+    .word 48
 .org 0x200

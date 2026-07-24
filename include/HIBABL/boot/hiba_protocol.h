@@ -99,8 +99,8 @@ struct vbe_mode_info
 
 struct hibaboot_header
 {
-    u8 jump[3];
-    u8 rsved[5];
+    u8 jump[2];
+    u8 rsved[6];
     u64 header_magic;
     u64 flags;
     u8 code[488];
@@ -156,7 +156,7 @@ struct screen_info
 
 int load_hibaos(const char* filename, struct boot_info* boot_info);
 
-#define HIBABOOT_HEADER_MAGIC 'HIBABOOT'
+#define HIBABOOT_HEADER_MAGIC 0x544F4F4241424948ULL
 
 #define HIBABOOT_HEADER_E820 1<<0
 #define HIBABOOT_HEADER_SI 1<<1
