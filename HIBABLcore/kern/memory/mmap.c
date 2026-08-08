@@ -54,7 +54,7 @@ static u8 mmap_get_entry(struct e820_entry *entry, u32 *continuation)
 
     bios_interrupt(0x15, &regs);
 
-    if(regs.eax!=0x534D4150 || regs.flags&1)
+    if(regs.eax!=0x534D4150 || regs.flags&1 || regs.ecx == 0)
     {
         return 0;
     }
@@ -64,6 +64,7 @@ static u8 mmap_get_entry(struct e820_entry *entry, u32 *continuation)
     return 1;
 }
 
+extern void printk(const char* fmt, ...);
 void mmap_iterate(void)
 {
     u32 continuation = 0;

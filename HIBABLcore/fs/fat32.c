@@ -19,9 +19,9 @@ void fat32_mount(struct fat32* info, u32 partition_lba, u32** fat_table)
 {
     void* buffer = kmalloc(512);
     disk_read(buffer, 1, partition_lba);
-    
+
     struct fat32_bpb* first_sector = (struct fat32_bpb*)buffer;
-    
+
     info->bytes_per_sector = first_sector->bytes_per_sector;
     info->numFATs = first_sector->num_fats;
     info->parition_addr = partition_lba;
@@ -33,9 +33,9 @@ void fat32_mount(struct fat32* info, u32 partition_lba, u32** fat_table)
     info->first_data_sector = partition_lba + info->reserved_sectors + (info->numFATs * info->sectors_per_FAT);
     info->entries_per_sector = info->bytes_per_sector * info->sectors_per_cluster/sizeof(struct fat32_dir_entry);
     info->fat_location = partition_lba + info->reserved_sectors;
-    
 
-    
+
+
     *fat_table = kmalloc(info->sectors_per_FAT*info->bytes_per_sector);
     disk_read((void*)*fat_table, info->sectors_per_FAT, (u64)info->fat_location);
 
@@ -81,7 +81,7 @@ int fat32_find(struct fat32* fs, u32 directory_cluster, const char* name, struct
         }
         current_cluster = fat32_next_cluster(current_cluster, fat_table);
         kfree(entries);
-    }    
+    }
     return ERRNF;
 }
 
@@ -99,7 +99,7 @@ void fat32_read(struct fat32* fs, struct fat32_file* file, void* buffer, u32* fa
     u32 bytes_per_cluster = fs->bytes_per_sector*fs->sectors_per_cluster;
     u32 remaining_bytes = bytes;
     u32 current_cluster = file->first_cluster;
-    
+
     while(remaining_bytes>0&&current_cluster<0x0FFFFFF8)
     {
         disk_read(buffer, fs->sectors_per_cluster, fat32_cluster_to_lba(fs, current_cluster));
@@ -109,14 +109,17 @@ void fat32_read(struct fat32* fs, struct fat32_file* file, void* buffer, u32* fa
     }
 }
 
-//This is gonna be our last function and its sole job will be to load our main kernel into memory 
+//This is gonna be our last function and its sole job will be to load our main kernel into memory
 
 int fat32_main(struct fat32** fs, u32** fat_table, const char* filename, void* address, u32 bytes, u32 parition_lba)
 {
     struct fat32_file file_data;
-    *fs = kmalloc(sizeof(struct fat32));
-    fat32_mount(*fs, parition_lba, fat_table);
+    if (*fs == NULL || *fat_table == NULL) {
+        *fs = kmalloc(sizeof(struct fat32));
+        fat32_mount(*fs, parition_lba, fat_table);
+    }
     int res = fat32_open(*fs, filename, &file_data, *fat_table);
+    if (res == ERRNF) return ERRNF;
     fat32_read(*fs, &file_data, address, *fat_table, bytes);
     return res;
 }

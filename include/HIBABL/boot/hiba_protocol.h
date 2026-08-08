@@ -113,9 +113,10 @@ struct boot_info
     u64 magic;
     u64 version;
     struct screen_info* si;
+    unsigned long : 32;
     struct e820_mm* mm;
-
-} HIBABL_PACKED;
+    unsigned long : 32;
+};
 
 struct screen_info
 {
@@ -123,9 +124,9 @@ struct screen_info
     u16 prev_video_points;  /* Height of a character in 8xG format. */
     u16 prev_video_page;    /* The page of text. Usually 0 */
     u8 prev_cursor_x;       /* Previous cursor position HIBABL will leave */
-    u8 prev_cursor_y;       
-    u8 prev_video_cols;     /* Text size dimensions. (80x25 text etc.)*/     
-    u8 prev_video_rows;     
+    u8 prev_cursor_y;
+    u8 prev_video_cols;     /* Text size dimensions. (80x25 text etc.)*/
+    u8 prev_video_rows;
 
     /* Data in case we encounter most certainly framebuffer support */
     /* VESA graphic mode. */
@@ -140,13 +141,13 @@ struct screen_info
 
     u8 red_size;
     u8 red_pos;
-    
+
     u8 blue_size;
     u8 blue_pos;
-    
+
     u8 green_size;
     u8 green_pos;
-    
+
     u8 rsvd_size;
     u8 rsvd_pos;
 

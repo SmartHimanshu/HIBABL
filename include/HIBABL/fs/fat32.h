@@ -73,7 +73,7 @@ struct fat32_dir_entry
     u8  attr;
     u8  reserved;
     u8  creation_tenths;
-    
+
     u16 creation_time;
     u16 creation_date;
     u16 access_date;
@@ -81,7 +81,7 @@ struct fat32_dir_entry
     u16 write_time;
     u16 write_date;
     u16 cluster_low;
-    
+
     u32 size;
 } HIBABL_PACKED;
 

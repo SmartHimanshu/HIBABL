@@ -18,3 +18,6 @@ run:
 
 clean:
 	rm -rf $(BIN_DIR)/* $(BUILD_DIR)/*
+
+export: $(BUILD_DIR)/disk.img
+	dd if=$(BUILD_DIR)/disk.img of=$(ROOT_DIR)/bootcode.bin bs=1 count=1M

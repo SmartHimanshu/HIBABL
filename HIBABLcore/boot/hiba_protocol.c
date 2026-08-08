@@ -27,7 +27,7 @@ static void* vbe_farptr_to_ptr(u32 farptr)
 int get_vbe_mode_info(struct vbe_mode_info* buffer, u16 mode_number)
 {
     struct bios_regs regs = {0};
-    
+
     regs.eax = 0x4F01;
 
     regs.ecx = mode_number;
@@ -50,7 +50,7 @@ int get_into_vbe_mode(u16 mode_number)
     regs.flags = DEFAULT_INT_FLAGS;
     regs.eax = 0x4F02;
     regs.ebx = 0x4000 | mode_number;
-    
+
     bios_interrupt(0x10, &regs);
 
     if ((regs.eax & 0xFFFF) != 0x004F)
@@ -64,19 +64,19 @@ int get_into_vbe_mode(u16 mode_number)
 int get_vbe_mode(struct vbe_info* buffer)
 {
     struct bios_regs regs = {0};
-    
+
     regs.eax = 0x4F00;
-    
+
     memcpy(buffer->signature, "VBE2", 4);
     regs.es = ((u32)buffer>>4)&0xFFFF;
     regs.edi = (u32)buffer&0xF;
-    
+
 
     bios_interrupt(0x10, &regs);
-    
+
     if((regs.eax&0xFFFF) != 0x004F || memcmp(buffer->signature, "VESA", 4))
         return 0;
-    
+
     return 1;
 }
 
@@ -107,7 +107,7 @@ int enumerate_vbe_modes(struct vbe_info* vbe_header, struct vbe_mode_info** best
     {
         if(!get_vbe_mode_info(buffer, ptr_to_modes[i]))
         {
-            continue;
+            break;
         }
 
         if(!(buffer->ModeAttributes & (1 << 0))) continue;
@@ -181,14 +181,12 @@ int load_hibaos(const char* filename, struct boot_info** boot_info)
     (*boot_info)->si = NULL;
     (*boot_info)->mm = NULL;
 
-    
 
-    struct fat32* fs;
-    u32* fat_entry;
+
+    struct fat32* fs = NULL;
+    u32* fat_entry = NULL;
 
     int res = fat32_main(&fs, &fat_entry, filename, (void*)HIBABL_MACHINE_KERNEL_ADDR, 512, 2048);
-    fat32_free(fs, fat_entry);
-
     if(!res) return 0;
 
     void* ptr = (void*)HIBABL_MACHINE_KERNEL_ADDR;
@@ -215,8 +213,8 @@ int load_hibaos(const char* filename, struct boot_info** boot_info)
             if(sucess && success)
             {
                 printk("VESA is available!\n");
-                /* Framebuffer supported VESA */
-        
+                // Framebuffer supported VESA
+
                 si->prev_video_type = BOOTINFO_SCREEN_INFO_FRAMEBUFFER;
 
                 si->blue_pos = best_mode->LinBlueFieldPosition;
@@ -230,7 +228,7 @@ int load_hibaos(const char* filename, struct boot_info** boot_info)
 
                 si->rsvd_pos = best_mode->LinRsvdFieldPosition;
                 si->rsvd_size = best_mode->LinRsvdMaskSize;
-        
+
                 si->fb_height = best_mode->YResolution;
                 si->fb_width = best_mode->XResolution;
                 si->fb_depth = best_mode->BitsPerPixel;
@@ -244,14 +242,13 @@ int load_hibaos(const char* filename, struct boot_info** boot_info)
             }
             else
             {
-                /* Framebuffer not supported, default to VGA console.*/
+                // Framebuffer not supported, default to VGA console.
             }
             kfree(best_mode);
         }
-        struct fat32* new_fs;
-        u32* new_fat;
-        fat32_main(&new_fs, &new_fat, filename, (void*)HIBABL_MACHINE_KERNEL_ADDR, 1024*1024*10, 2048);
-        fat32_free(new_fs, new_fat);
+
+        fat32_main(&fs, &fat_entry, filename, (void*)HIBABL_MACHINE_KERNEL_ADDR, 1024*1024*10, 2048);
+        fat32_free(fs, fat_entry);
         return 1;
     }
     else
