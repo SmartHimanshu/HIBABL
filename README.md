@@ -14,7 +14,7 @@ HIBABL is a three-stage bootloader that initializes the system environment, prov
 1. x86_64 architecture support
 2. Legacy BIOS boot support
 3. Three-stage boot architecture
-4. CHS and LBA disk addressing support
+4. Partial CHS and Full LBA disk addressing support
 5. BIOS disk I/O
 6. Workarounds for buggy BIOS implementations
 7. FAT32 filesystem support
@@ -28,7 +28,7 @@ HIBABL is a three-stage bootloader that initializes the system environment, prov
 
 ### Memory and processor initialization
 13. Physical Memory Manager (PMM)
-14. Virtual Memory Manager (VMM)
+14. Heap allocator on top of the PMM.
 15. Global Descriptor Table (GDT) setup
 
 ### Other features
