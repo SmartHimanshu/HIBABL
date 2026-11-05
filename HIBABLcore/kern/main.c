@@ -24,5 +24,7 @@ struct boot_info* kmain()
     struct boot_info* boot_info;
     int res = load_hibaos("KERNEL  BIN", &boot_info);
     printk("Have we succeded in loading the kernel? : %d\n", res);
+    if(!res)
+        for(;;) ;
     return boot_info;
 }
