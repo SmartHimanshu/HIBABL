@@ -19,12 +19,17 @@ struct boot_info* kmain()
 {
     terminal_init();
     printk("Welcome to HIBA bootloader!\n");
+
     allocator_init();
     disk_geometry_init();
     struct boot_info* boot_info;
+
     int res = load_hibaos("KERNEL  BIN", &boot_info);
-    printk("Have we succeded in loading the kernel? : %d\n", res);
-    if(!res)
-        for(;;) ;
+    if(res)
+	    printk("We have successfully loaded the kernel!");
+    else
+	    printk("No kernel bin file found...");
+            for(;;) ;
+
     return boot_info;
 }
