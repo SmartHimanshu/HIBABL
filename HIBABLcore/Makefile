@@ -13,12 +13,15 @@ boot_build:
 core_build:
 	$(MAKE) -f $(CORE_DIR)/Makefile.core
 
+$(BUILD_DIR)/kernel.bin:
+	touch $(BUILD_DIR)/kernel.bin
+
 # Both .bin files depend on the phony rule — Make won't double-invoke
 $(BUILD_DIR)/boot.bin $(BUILD_DIR)/diskboot.bin: boot_build
 
 $(BUILD_DIR)/core.bin: core_build
 
-$(BUILD_DIR)/disk.img: $(BUILD_DIR)/boot.bin $(BUILD_DIR)/diskboot.bin $(BUILD_DIR)/core.bin
+$(BUILD_DIR)/disk.img: $(BUILD_DIR)/boot.bin $(BUILD_DIR)/diskboot.bin $(BUILD_DIR)/core.bin $(BUILD_DIR)/kernel.bin
 	rm -f $@
 
 	truncate -s $(IMG_SIZE) $@
@@ -31,10 +34,9 @@ $(BUILD_DIR)/disk.img: $(BUILD_DIR)/boot.bin $(BUILD_DIR)/diskboot.bin $(BUILD_D
 	# Save partition table + signature
 	dd if=$@ of=$(BUILD_DIR)/pt.bin bs=1 skip=446 count=66
 
-	# Format the FAT32 partition
-	LOOP=$$(sudo losetup --find --show -P $@); \
-	sudo mkfs.fat -F 32 -s 32 $${LOOP}p1; \
-	sudo losetup -d $$LOOP
+
+	# Format the FAT32 partition without loop devices
+	mformat -i $(BUILD_DIR)/disk.img@@1048576 -F -c 32 ::
 
 	# Install our boot sector (only first 446 bytes of code,
 	# leave partition table intact)
@@ -46,7 +48,7 @@ $(BUILD_DIR)/disk.img: $(BUILD_DIR)/boot.bin $(BUILD_DIR)/diskboot.bin $(BUILD_D
 	dd if=$(BUILD_DIR)/diskboot.bin of=$@ bs=512 seek=1 conv=notrunc
 	dd if=$(BUILD_DIR)/core.bin of=$@ bs=512 seek=2 conv=notrunc
 
-	mcopy -o -i $(BUILD_DIR)/disk.img@@1048576 $(CORE_DIR)/kernel.bin ::KERNEL.BIN
+	mcopy -o -i $(BUILD_DIR)/disk.img@@1048576 $(BUILD_DIR)/kernel.bin ::KERNEL.BIN
 
 clean:
 	$(MAKE) -C $(BOOT_DIR) clean
